@@ -1,4 +1,32 @@
+# Direktori node_modules (WAJIB di-ignore!)
 node_modules/
+
+# File environment
 .env
-tmp/
+.env.local
+.env.development
+.env.production
+
+# Build artifacts
+dist/
+.build/
+.next/
+
+# Sistem
 .DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+*.tmp
+
+# Dependency directories
+/bower_components/
+/jspm_packages/
+
+# Lock files
+package-lock.json
+yarn.lock

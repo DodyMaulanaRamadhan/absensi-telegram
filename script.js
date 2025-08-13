@@ -18,7 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('absensi-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
+    const formData = new FormData();
+    formData.append('nama', document.querySelector('[name="nama"]').value);
+    formData.append('posisi', document.querySelector('[name="posisi"]').value);
+    formData.append('absensi', document.querySelector('[name="absensi"]').value);
+    formData.append('alasan', document.querySelector('[name="alasan"]').value);
+
+    // Hanya kirim foto jika ada
+    const foto = document.querySelector('[name="foto"]').files[0];
+    if (foto) {
+      formData.append('foto', foto);
+    }
     
     try {
       const response = await fetch('/api/submit', {

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Hari Ini</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+    h1 { text-align: center; color: #2c3e50; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 8px; }
+    button { background-color: #3498db; color: white; border: none; padding: 10px 15px; cursor: pointer; }
+    #alasan { display: none; }
+  </style>
+</head>
+<body>
+  <h1 id="dynamic-title">Memuat...</h1>
+  <form id="absensi-form" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>Nama:</label>
+      <input type="text" name="nama" required>
+    </div>
+    
+    <div class="form-group">
+      <label>Posisi:</label>
+      <select name="posisi" required>
+        <option value="teknisi">Teknisi</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label>Absensi:</label>
+      <select name="absensi" id="absensi-select" required>
+        <option value="hadir">Hadir</option>
+        <option value="tidak hadir">Tidak Hadir</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="alasan">Alasan Tidak Hadir:</label>
+      <textarea name="alasan" id="alasan" placeholder="Jika tidak hadir, jelaskan alasan..."></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Foto Diri (Opsional):</label>
+      <input type="file" name="foto" accept="image/*">
+    </div>
+    
+    <button type="submit">Kirim Absensi</button>
+  </form>
+
+  <script src="script.js"></script>
+</body>
+</html>

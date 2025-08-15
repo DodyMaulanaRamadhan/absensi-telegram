@@ -9,6 +9,7 @@ module.exports = async (req, res) => {
 
   try {
     const { nama, posisi, absensi, alasan, lat, lon, alamat } = req.body;
+    const googleMapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
 
     // Format pesan dengan lokasi
     let message = `📅 *ABSENSI ${new Date().toLocaleDateString('id-ID')}*\n\n`;
@@ -19,7 +20,8 @@ module.exports = async (req, res) => {
       message += `📝 *Alasan*: ${alasan}\n`;
     }
     message += `📍 *Lokasi*: ${alamat}\n`;
-    message += `🌐 *Koordinat*: ${lat}, ${lon}`;
+    message += `🔗 *Google Maps*: ${googleMapsLink}\n`;
+    message += `🌐 *Koordinat*: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
 
     // Kirim ke Telegram
     await sendTelegramMessage(message);

@@ -19,12 +19,58 @@ function getLocation() {
 // Fungsi untuk mendapatkan alamat dari koordinat (gunakan OpenStreetMap Nominatim)
 async function getReverseGeocode(lat, lon) {
   try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+    // Tambahkan user_agent untuk memenuhi kebijakan OpenStreetMap
+    const userAgent = 'Absensi-Telegram-App/1.0 (dodymaulana@example.com)';
+    
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
+      {
+        headers: {
+          'User-Agent': userAgent,
+          'Accept': 'application/json'
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const data = await response.json();
-    return data[0].display_name;
+    
+    // Bangun alamat secara manual dari data yang tersedia
+    let alamat = [];
+    
+    // Tambahkan nama jalan jika tersedia
+    if (data.address.road) alamat.push(data.address.road);
+    
+    // Tambahkan nama daerah
+    if (data.address.suburb) alamat.push(data.address.suburb);
+    else if (data.address.neighbourhood) alamat.push(data.address.neighbourhood);
+    
+    // Tambahkan kota
+    if (data.address.city) alamat.push(data.address.city);
+    else if (data.address.town) alamat.push(data.address.town);
+    else if (data.address.village) alamat.push(data.address.village);
+    
+    // Tambahkan provinsi
+    if (data.address.state) alamat.push(data.address.state);
+    
+    // Jika ada nama tempat (seperti nama gedung)
+    if (data.display_name) {
+      const namaTempat = data.display_name.split(',')[0].trim();
+      if (!alamat[0] || namaTempat !== alamat[0]) {
+        alamat.unshift(namaTempat);
+      }
+    }
+    
+    return alamat.join(', ') || 'Lokasi umum';
+    
   } catch (error) {
-    console.error('Gagal mendapatkan alamat:', error);
-    return 'Alamat tidak tersedia';
+    console.error('Reverse geocode error:', error);
+    
+    // Alternatif jika API gagal: buat alamat sederhana
+    return `Koordinat: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
   }
 }
   
@@ -43,7 +89,8 @@ async function getReverseGeocode(lat, lon) {
   // Ambil data form
   const nama = document.querySelector('[name="nama"]').value;
   const posisi = document.querySelector('[name="posisi"]').selectedOptions[0].text;
-  const absensi = document.querySelector('[name="absensi"]').selectedOptions[0].text;
+  // Ambil VALUE (bukan TEXT) dari dropdown
+  const absensi = document.querySelector('[name="absensi"]').value;
   const alasan = document.querySelector('[name="alasan"]').value;
 
   // Ambil lokasi

@@ -5,6 +5,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const date = now.getDate();
   const month = months[now.getMonth()];
   const year = now.getFullYear();
+
+  // Fungsi untuk mendapatkan lokasi
+function getLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation tidak didukung browser'));
+    }
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+}
+
+// Fungsi untuk mendapatkan alamat dari koordinat (gunakan OpenStreetMap Nominatim)
+async function getReverseGeocode(lat, lon) {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`);
+    const data = await response.json();
+    return data[0].display_name;
+  } catch (error) {
+    console.error('Gagal mendapatkan alamat:', error);
+    return 'Alamat tidak tersedia';
+  }
+}
   
   document.getElementById('dynamic-title').textContent = `ABSENSI ${date} ${month} ${year}`;
   
@@ -16,35 +38,39 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // 3. Kirim form ke serverless function
   document.getElementById('absensi-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData();
-    formData.append('nama', document.querySelector('[name="nama"]').value);
-    formData.append('posisi', document.querySelector('[name="posisi"]').value);
-    formData.append('absensi', document.querySelector('[name="absensi"]').value);
-    formData.append('alasan', document.querySelector('[name="alasan"]').value);
+  e.preventDefault();
+  
+  // Ambil data form
+  const nama = document.querySelector('[name="nama"]').value;
+  const posisi = document.querySelector('[name="posisi"]').selectedOptions[0].text;
+  const absensi = document.querySelector('[name="absensi"]').selectedOptions[0].text;
+  const alasan = document.querySelector('[name="alasan"]').value;
 
-    // Hanya kirim foto jika ada
-    const foto = document.querySelector('[name="foto"]').files[0];
-    if (foto) {
-      formData.append('foto', foto);
+  // Ambil lokasi
+  try {
+    const position = await getLocation();
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    const alamat = await getReverseGeocode(lat, lon);
+
+    // Kirim ke server
+    const response = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nama, posisi, absensi, alasan, lat, lon, alamat
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Gagal mengirim absensi');
     }
-    
-    try {
-      const response = await fetch('/api/submit', {
-        method: 'POST',
-        body: formData
-      });
-      
-      if (response.ok) {
-        alert('Absensi berhasil dikirim ke Telegram!');
-        form.reset();
-      } else {
-        alert('Gagal mengirim absensi. Coba lagi.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Terjadi kesalahan teknis.');
-    }
-  });
+
+    alert('Absensi berhasil dikirim!');
+    document.getElementById('absensi-form').reset();
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Gagal mengirim absensi. Pastikan izin lokasi diaktifkan.');
+  }
+});
 });

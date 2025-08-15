@@ -3,48 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absensi Hari Ini</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-    h1 { text-align: center; color: #2c3e50; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 8px; }
-    button { background-color: #3498db; color: white; border: none; padding: 10px 15px; cursor: pointer; }
-    #alasan { display: none; }
-  </style>
+  <title>Absensi Harian INEO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1 id="dynamic-title">Memuat...</h1>
-  <form id="absensi-form" enctype="multipart/form-data">
-    <div class="form-group">
-      <label>Nama:</label>
-      <input type="text" name="nama" required>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-building"></i>
+      </div>
+      <h1 class="company-name">PT. Integrasi Neka Optik (INEO)</h1>
+      <p class="company-subtitle">Medan - Absensi Karyawan</p>
+      <h2 class="date-display" id="dynamic-title">Memuat...</h2>
     </div>
-    
-    <div class="form-group">
-      <label>Posisi:</label>
-      <select name="posisi" required>
-        <option value="teknisi">Teknisi</option>
-        <option value="admin">Admin</option>
-      </select>
+
+    <div class="form-card">
+      <div class="form-header">
+        <h2><i class="fas fa-clipboard-list"></i> Form Absensi Harian</h2>
+      </div>
+      
+      <div class="form-body">
+        <form id="absensi-form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="nama"><i class="fas fa-user"></i> Nama Lengkap</label>
+            <input type="text" id="nama" name="nama" class="form-control" placeholder="Masukkan nama lengkap Anda" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="posisi"><i class="fas fa-briefcase"></i> Posisi</label>
+            <select id="posisi" name="posisi" class="form-control" required>
+              <option value="" disabled selected>Pilih posisi Anda</option>
+              <option value="teknisi">Teknisi</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-calendar-check"></i> Kehadiran</label>
+            <div class="status-toggle">
+              <div class="status-option active" data-value="hadir">Hadir</div>
+              <div class="status-option" data-value="tidak hadir">Tidak Hadir</div>
+            </div>
+            <input type="hidden" name="absensi" value="hadir">
+          </div>
+          
+          <div class="form-group" id="alasan-group" style="display: none;">
+            <label for="alasan"><i class="fas fa-comment"></i> Alasan Tidak Hadir</label>
+            <textarea id="alasan" name="alasan" class="form-control" placeholder="Jelaskan alasan Anda tidak hadir..." rows="3"></textarea>
+          </div>
+          
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-paper-plane"></i> Kirim Absensi
+          </button>
+        </form>
+        
+        <div class="success-message" id="success-message">
+          <i class="fas fa-check-circle"></i> Absensi berhasil dikirim! Terima kasih.
+        </div>
+      </div>
     </div>
-    
-    <div class="form-group">
-      <label>Absensi:</label>
-      <select name="absensi" id="absensi-select" required>
-        <option value="hadir">Hadir</option>
-        <option value="tidak hadir">Tidak Hadir</option>
-      </select>
+
+    <div class="footer">
+      <p>&copy; 2025 PT. Integrasi Neka Optik (INEO) Medan | Sistem Absensi Digital</p>
+      <p>Dikembangkan dengan <span style="color: #e74c3c;">&hearts;</span> oleh tim IT INEO</p>
     </div>
-    
-    <div class="form-group">
-      <label for="alasan">Alasan Tidak Hadir:</label>
-      <textarea name="alasan" id="alasan" placeholder="Jika tidak hadir, jelaskan alasan..."></textarea>
-    </div>
-    
-    <button type="submit">Kirim Absensi</button>
-  </form>
+  </div>
 
   <script src="script.js"></script>
 </body>
